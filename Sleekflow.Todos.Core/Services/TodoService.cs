@@ -85,8 +85,22 @@ public class TodoService(TodoContext context) : ITodoServie
         return responseModel;
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task<ServiceResponseModel> DeleteAsync(Guid id)
     {
+        var responseModel = await GetAsync(id);
 
+        if (responseModel.Data == null)
+        {
+            return new()
+            {
+                Errors = responseModel.Errors
+            };
+        }
+
+        responseModel.Data.IsDeleted = true;
+
+        await _context.SaveChangesAsync();
+
+        return new();
     }
 }

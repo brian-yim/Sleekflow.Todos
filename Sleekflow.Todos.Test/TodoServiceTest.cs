@@ -101,12 +101,21 @@ public class TodoServiceTest : IDisposable
 
         var result = await _todoService.UpdateAsync(testId, todoModel);
 
-
         Assert.NotNull(result.Data);
         Assert.Empty(result.Errors);
 
         Assert.Equal(todoModel.Name, result.Data.Name);
         Assert.Equal(todoModel.Description, result.Data.Description);
         Assert.Equal(todoModel.DueDate, result.Data.DueDate);
+    }
+
+    [Fact]
+    public async void DeleteAsync_Success()
+    {
+        var testId = new Guid("7984908b-3f91-4a6c-a671-85119f41eda7");
+
+        var result = await _todoService.DeleteAsync(testId);
+
+        Assert.Empty(result.Errors);
     }
 }

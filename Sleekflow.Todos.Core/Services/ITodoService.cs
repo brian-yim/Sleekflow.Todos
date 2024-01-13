@@ -9,5 +9,5 @@ public interface ITodoServie
     Task<ServiceResponseModel<Todo>> GetAsync(Guid id);
     Task<ServiceResponseModel<Todo>> CreateAsync(TodoModel model);
     Task<ServiceResponseModel<Todo>> UpdateAsync(Guid id, TodoModel model);
-    Task DeleteAsync(Guid id);
+    Task<ServiceResponseModel> DeleteAsync(Guid id);
 }
