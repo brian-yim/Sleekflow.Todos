@@ -1,5 +1,5 @@
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Sleekflow.Todos.Core.Enums;
 using Sleekflow.Todos.Core.Models;
 using Sleekflow.Todos.DAL;
 using Sleekflow.Todos.DAL.Models;
@@ -36,12 +36,37 @@ public class TodoService(TodoContext context) : ITodoServie
         return result;
     }
 
-    public async Task CreateAsync(TodoModel todo)
+    public async Task<ServiceResponseModel<Todo>> CreateAsync(TodoModel model)
     {
+        var result = new ServiceResponseModel<Todo>();
+        try
+        {
+            //TODO: Get username
+            var todo = new Todo()
+            {
+                Name = model.Name,
+                Description = model.Description,
+                DueDate = model.DueDate,
+                Status = nameof(Status.NotStarted),
+                CreatedBy = "",
+                UpdatedBy = ""
+            };
 
+            await _context.Todos.AddAsync(todo);
+            await _context.SaveChangesAsync();
+
+            result.Data = todo;
+        }
+        catch (Exception ex)
+        {
+            //TODO: add log
+            result.Errors.Add(new ErrorModel(ex.Message));
+        }
+
+        return result;
     }
 
-    public async Task UpdateAsync(Guid id, TodoModel todo)
+    public async Task UpdateAsync(Guid id, TodoModel model)
     {
 
     }

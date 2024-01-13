@@ -8,6 +8,6 @@ public class Auditable
     public required string CreatedBy { get; set; }
     [MaxLength(255)]
     public required string UpdatedBy { get; set; }
-    public required DateTime CreatedAt { get; set; }
-    public required DateTime UpdatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime UpdatedAt { get; set; } = DateTime.Now;
 }

@@ -39,12 +39,6 @@ public class TodoServiceTest : IDisposable
     }
 
     [Fact]
-    public async void CreateAsync_Success()
-    {
-        await _todoService.CreateAsync(MockTodoModel.Create());
-    }
-
-    [Fact]
     public async void GetAsync_Success()
     {
         var recordCount = MockTodos.GetList().Count;
@@ -75,5 +69,21 @@ public class TodoServiceTest : IDisposable
         Assert.Null(result.Data);
         Assert.NotEmpty(result.Errors);
         Assert.IsType<NotFoundError>(result.Errors.First());
+    }
+
+    [Fact]
+    public async void CreateAsync_Success()
+    {
+        var todoModel = new TodoModel()
+        {
+            Name = "Test Create",
+            Description = "Test Description",
+            DueDate = new DateTime(2025, 1, 1),
+        };
+
+        var result = await _todoService.CreateAsync(todoModel);
+
+        Assert.NotNull(result.Data);
+        Assert.Empty(result.Errors);
     }
 }
