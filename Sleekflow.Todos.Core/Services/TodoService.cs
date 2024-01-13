@@ -24,7 +24,7 @@ public class TodoService(TodoContext context) : ITodoService
             if (!string.IsNullOrWhiteSpace(filterField))
             {
                 query = query.Where(todo =>
-                    EF.Property<object>(todo, filterField) == filter.Value
+                    EF.Property<object>(todo, filterField) == (object)filter.Value
                 );
 
             }
