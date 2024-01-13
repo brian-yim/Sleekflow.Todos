@@ -1,0 +1,6 @@
+@Sleekflow.Todos.Web_HostAddress = http://localhost:5270
+
+GET {{Sleekflow.Todos.Web_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
