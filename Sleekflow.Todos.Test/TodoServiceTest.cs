@@ -86,4 +86,27 @@ public class TodoServiceTest : IDisposable
         Assert.NotNull(result.Data);
         Assert.Empty(result.Errors);
     }
+
+    [Fact]
+    public async void UpdateAsync_Success()
+    {
+        var testId = new Guid("7984908b-3f91-4a6c-a671-85119f41eda7");
+
+        var todoModel = new TodoModel()
+        {
+            Name = "Test Update Name",
+            Description = "Test Update Description",
+            DueDate = new DateTime(2025, 1, 1),
+        };
+
+        var result = await _todoService.UpdateAsync(testId, todoModel);
+
+
+        Assert.NotNull(result.Data);
+        Assert.Empty(result.Errors);
+
+        Assert.Equal(todoModel.Name, result.Data.Name);
+        Assert.Equal(todoModel.Description, result.Data.Description);
+        Assert.Equal(todoModel.DueDate, result.Data.DueDate);
+    }
 }

@@ -66,9 +66,23 @@ public class TodoService(TodoContext context) : ITodoServie
         return result;
     }
 
-    public async Task UpdateAsync(Guid id, TodoModel model)
+    public async Task<ServiceResponseModel<Todo>> UpdateAsync(Guid id, TodoModel model)
     {
+        var responseModel = await GetAsync(id);
 
+        if (responseModel.Data == null)
+        {
+            return responseModel;
+        }
+
+        var todo = responseModel.Data;
+        todo.Name = model.Name;
+        todo.Description = model.Description;
+        todo.DueDate = model.DueDate;
+
+        await _context.SaveChangesAsync();
+
+        return responseModel;
     }
 
     public async Task DeleteAsync(Guid id)
