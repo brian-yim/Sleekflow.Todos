@@ -28,6 +28,18 @@ public static class MockTodos
                 UpdatedBy = "Mock",
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
+            },
+            new()
+            {
+                Id = new Guid("7984908b-3f91-4a6c-a651-85119f41eda8"),
+                Name = "Test Name 3",
+                Description = "Test Description 3",
+                Status = "Not Started",
+                CreatedBy = "Mock",
+                UpdatedBy = "Mock",
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                IsDeleted = true,
             }
         ];
     }

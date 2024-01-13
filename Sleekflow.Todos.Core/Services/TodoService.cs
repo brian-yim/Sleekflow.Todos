@@ -14,7 +14,9 @@ public class TodoService(TodoContext context) : ITodoServie
     {
         return new()
         {
-            Data = await _context.Todos.ToListAsync()
+            Data = await _context.Todos
+                .Where(todo => !todo.IsDeleted)
+                .ToListAsync()
         };
     }
 
@@ -23,7 +25,10 @@ public class TodoService(TodoContext context) : ITodoServie
         var result = new ServiceResponseModel<Todo>();
 
         var todo = await _context.Todos
-            .Where(todo => todo.Id == id)
+            .Where(todo =>
+                !todo.IsDeleted &&
+                todo.Id == id
+            )
             .FirstOrDefaultAsync();
 
         if (todo == null)
