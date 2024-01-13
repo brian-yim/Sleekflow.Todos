@@ -6,7 +6,7 @@ using Sleekflow.Todos.DAL.Models;
 
 namespace Sleekflow.Todos.Core.Services;
 
-public class TodoService(TodoContext context) : ITodoServie
+public class TodoService(TodoContext context) : ITodoService
 {
     private readonly TodoContext _context = context;
 

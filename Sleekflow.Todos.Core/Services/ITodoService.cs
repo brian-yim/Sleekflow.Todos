@@ -3,7 +3,7 @@ using Sleekflow.Todos.DAL.Models;
 
 namespace Sleekflow.Todos.Core.Services;
 
-public interface ITodoServie
+public interface ITodoService
 {
     Task<ServiceResponseModel<List<Todo>>> GetAsync(
         IEnumerable<RequestFilterModel>? filters = null,

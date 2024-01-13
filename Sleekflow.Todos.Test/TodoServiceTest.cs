@@ -10,7 +10,7 @@ namespace Sleekflow.Todos.Test;
 public class TodoServiceTest : IDisposable
 {
     private readonly TodoContext _conetxt;
-    private readonly ITodoServie _todoService;
+    private readonly ITodoService _todoService;
     private readonly SqliteConnection _connection;
 
     public TodoServiceTest()

@@ -1,25 +1,32 @@
 using Microsoft.EntityFrameworkCore;
 using Sleekflow.Todos.DAL;
+using Sleekflow.Todos.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TodoContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddControllers();
+builder.Services.AddServiceCollection();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+app.MapControllers()
+.WithOpenApi();
 
 var summaries = new[]
 {
