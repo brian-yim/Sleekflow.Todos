@@ -11,4 +11,6 @@ public class Todo : Auditable
     public DateTime DueDate { get; set; }
     public required string Status { get; set; }
     public bool IsDeleted { get; set; }
+    public int Priority { get; set; } = 0;
+    public IEnumerable<TodoTag>? TodoTags { get; set; } = [];
 }
