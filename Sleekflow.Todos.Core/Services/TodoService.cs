@@ -10,9 +10,12 @@ public class TodoService(TodoContext context) : ITodoServie
 {
     private readonly TodoContext _context = context;
 
-    public async Task GetAsync()
+    public async Task<ServiceResponseModel<List<Todo>>> GetAsync()
     {
-
+        return new()
+        {
+            Data = await _context.Todos.ToListAsync()
+        };
     }
 
     public async Task<ServiceResponseModel<Todo>> GetAsync(Guid id)

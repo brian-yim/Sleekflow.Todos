@@ -1,5 +1,6 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Sleekflow.Todos.Core.Models;
 using Sleekflow.Todos.Core.Services;
 using Sleekflow.Todos.DAL;
 using Sleekflow.Todos.Test.Mocks;
@@ -46,10 +47,33 @@ public class TodoServiceTest : IDisposable
     [Fact]
     public async void GetAsync_Success()
     {
+        var recordCount = MockTodos.GetList().Count;
+        var result = await _todoService.GetAsync();
+
+        Assert.NotNull(result.Data);
+
+        Assert.Equal(recordCount, result.Data.Count);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public async void GetByIdAsync_Success()
+    {
         var testId = new Guid("7984908b-3f91-4a6c-a671-85119f41eda7");
         var result = await _todoService.GetAsync(testId);
 
         Assert.NotNull(result.Data);
         Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public async void GetByIdAsync_NotFound_Success()
+    {
+        var testId = new Guid("7984908b-3f91-4a2c-a671-85119f41eda7");
+        var result = await _todoService.GetAsync(testId);
+
+        Assert.Null(result.Data);
+        Assert.NotEmpty(result.Errors);
+        Assert.IsType<NotFoundError>(result.Errors.First());
     }
 }
