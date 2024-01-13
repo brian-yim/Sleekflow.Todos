@@ -5,7 +5,10 @@ namespace Sleekflow.Todos.Core.Services;
 
 public interface ITodoServie
 {
-    Task<ServiceResponseModel<List<Todo>>> GetAsync();
+    Task<ServiceResponseModel<List<Todo>>> GetAsync(
+        IEnumerable<RequestFilterModel>? filters = null,
+        RequestSortModel? sort = null
+    );
     Task<ServiceResponseModel<Todo>> GetAsync(Guid id);
     Task<ServiceResponseModel<Todo>> CreateAsync(TodoModel model);
     Task<ServiceResponseModel<Todo>> UpdateAsync(Guid id, TodoModel model);

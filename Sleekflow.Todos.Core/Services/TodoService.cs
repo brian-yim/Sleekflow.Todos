@@ -10,13 +10,31 @@ public class TodoService(TodoContext context) : ITodoServie
 {
     private readonly TodoContext _context = context;
 
-    public async Task<ServiceResponseModel<List<Todo>>> GetAsync()
+    public async Task<ServiceResponseModel<List<Todo>>> GetAsync(
+        IEnumerable<RequestFilterModel>? filters = null,
+        RequestSortModel? sort = null
+    )
     {
+        var query = _context.Todos.Where(todo => !todo.IsDeleted);
+
+        foreach (var filter in filters ?? [])
+        {
+            query = query.Where(q =>
+                EF.Property<object>(q, filter.Field) == filter.Value
+            );
+        }
+
+        if (sort != null)
+        {
+            query = sort.Direction == "+" ?
+                query.OrderBy(todo => EF.Property<object>(todo, sort.Field)) :
+                query.OrderByDescending(todo => EF.Property<object>(todo, sort.Field))
+            ;
+        }
+
         return new()
         {
-            Data = await _context.Todos
-                .Where(todo => !todo.IsDeleted)
-                .ToListAsync()
+            Data = await query.ToListAsync()
         };
     }
 

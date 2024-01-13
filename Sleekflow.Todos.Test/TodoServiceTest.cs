@@ -44,12 +44,79 @@ public class TodoServiceTest : IDisposable
         var recordCount = MockTodos.GetList()
             .Where(todo => !todo.IsDeleted)
             .Count();
+
         var result = await _todoService.GetAsync();
+
 
         Assert.NotNull(result.Data);
 
         Assert.Equal(recordCount, result.Data.Count);
         Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public async void GetAsync_WithFilters_Success()
+    {
+        var statusFilter = new RequestFilterModel()
+        {
+            Field = "Status",
+            Value = "Not Started"
+        };
+        var createdByFilter = new RequestFilterModel()
+        {
+            Field = "CreatedBy",
+            Value = "Mock1"
+        };
+
+        var recordCount = MockTodos.GetList()
+            .Where(todo =>
+                !todo.IsDeleted &&
+                todo.Status == "Not Started" &&
+                todo.CreatedBy == "Mock1"
+            )
+            .Count();
+
+        var result = await _todoService.GetAsync([statusFilter, createdByFilter]);
+
+        Assert.NotNull(result.Data);
+
+        Assert.Equal(recordCount, result.Data.Count);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public async void GetAsync_WithSort_Success()
+    {
+        var statusFilter = new RequestFilterModel()
+        {
+            Field = "Status",
+            Value = "Not Started"
+        };
+
+        var sort = new RequestSortModel()
+        {
+            Field = "CreatedAt",
+            Direction = "-"
+        };
+
+        var records = MockTodos.GetList()
+            .Where(todo =>
+                !todo.IsDeleted &&
+                todo.Status == "Not Started"
+            )
+            .OrderByDescending(todo => todo.CreatedAt);
+
+        var result = await _todoService.GetAsync([statusFilter], sort);
+
+        Assert.NotNull(result.Data);
+
+        Assert.Equal(records.Count(), result.Data.Count);
+        Assert.Empty(result.Errors);
+
+        Assert.Equal(
+            records.Select(todo => todo.Id).FirstOrDefault(),
+            result.Data.Select(todo => todo.Id).FirstOrDefault()
+        );
     }
 
     [Fact]

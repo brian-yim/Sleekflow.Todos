@@ -23,7 +23,7 @@ public static class MockTodos
                 Id = new Guid("7984908b-3f91-4a6c-a671-85119f41eda8"),
                 Name = "Test Name 2",
                 Description = "Test Description 2",
-                Status = "Not Started",
+                Status = "Completed",
                 CreatedBy = "Mock",
                 UpdatedBy = "Mock",
                 CreatedAt = DateTime.Now,
@@ -40,6 +40,17 @@ public static class MockTodos
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = true,
+            },
+            new()
+            {
+                Id = new Guid("7984908b-3f91-4a6c-a651-85119f31eda8"),
+                Name = "Test Name 4",
+                Description = "Test Description 4",
+                Status = "Not Started",
+                CreatedBy = "Mock1",
+                UpdatedBy = "Mock1",
+                CreatedAt = DateTime.Now.AddDays(1),
+                UpdatedAt = DateTime.Now.AddDays(1),
             }
         ];
     }

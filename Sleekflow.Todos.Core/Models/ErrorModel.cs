@@ -1,16 +1,9 @@
 namespace Sleekflow.Todos.Core.Models;
 
-public class ErrorModel
+public class ErrorModel(string message)
 {
-    public string? Message { get; set; }
-    public ErrorModel(string message)
-    {
-        Message = message;
-    }
+    public string? Message { get; set; } = message;
 }
 
-public class NotFoundError : ErrorModel
-{
-    public NotFoundError(string message = "Record Not Found.")
-    : base(message) { }
-}
+public class NotFoundError(string message = "Record Not Found.")
+    : ErrorModel(message);
