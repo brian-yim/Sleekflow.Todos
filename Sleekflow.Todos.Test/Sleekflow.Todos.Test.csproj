@@ -23,4 +23,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Sleekflow.Todos.Core\Sleekflow.Todos.Core.csproj" />
+  </ItemGroup>
+
 </Project>
