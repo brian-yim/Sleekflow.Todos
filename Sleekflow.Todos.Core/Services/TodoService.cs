@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Sleekflow.Todos.Core.Enums;
+using Sleekflow.Todos.Core.Helpers;
 using Sleekflow.Todos.Core.Models;
 using Sleekflow.Todos.DAL;
 using Sleekflow.Todos.DAL.Models;
@@ -19,17 +20,25 @@ public class TodoService(TodoContext context) : ITodoService
 
         foreach (var filter in filters ?? [])
         {
-            query = query.Where(q =>
-                EF.Property<object>(q, filter.Field) == filter.Value
-            );
+            FieldMapper.map.TryGetValue(filter.Field.ToLower(), out var filterField);
+            if (!string.IsNullOrWhiteSpace(filterField))
+            {
+                query = query.Where(todo =>
+                    EF.Property<object>(todo, filterField) == filter.Value
+                );
+
+            }
         }
 
         if (sort != null)
         {
-            query = sort.Direction == "+" ?
-                query.OrderBy(todo => EF.Property<object>(todo, sort.Field)) :
-                query.OrderByDescending(todo => EF.Property<object>(todo, sort.Field))
-            ;
+            FieldMapper.map.TryGetValue(sort.Field.ToLower(), out var sortedField);
+            if (!string.IsNullOrWhiteSpace(sortedField))
+            {
+                query = sort.Direction == "+" ?
+                    query.OrderBy(todo => EF.Property<object>(todo, sortedField)) :
+                    query.OrderByDescending(todo => EF.Property<object>(todo, sortedField));
+            }
         }
 
         return new()

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Sleekflow.Todos.Core.Models;
 using Sleekflow.Todos.Core.Services;
-using Sleekflow.Todos.DAL.Models;
 using Sleekflow.Todos.Web.Extensions;
 
 namespace Sleekflow.Todos.Web.Controllers;
@@ -18,20 +17,19 @@ public class TodoController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> List(
-    // [FromQuery] string? status,
-    // [FromQuery] DateTime? status,
-    // [FromQuery] IEnumerable<RequestFilterModel>? filters
+        [FromQuery] string? sortString,
+        [FromQuery] RequestFilterModel[]? filters
     )
     {
-        // var sort = string.IsNullOrWhiteSpace(sortString) ? 
-        //     null :
-        //     new RequestSortModel()
-        //     {
-        //         Field = sortString.Remove(0, 1),
-        //         Direction = $"{sortString?[0]}",
-        //     };
+        var sort = string.IsNullOrWhiteSpace(sortString) ?
+            null :
+            new RequestSortModel()
+            {
+                Field = sortString.Remove(0, 1),
+                Direction = $"{sortString[0]}",
+            };
 
-        var result = await _todoService.GetAsync();
+        var result = await _todoService.GetAsync(filters, sort);
 
         return this.ToReponse(result);
     }
