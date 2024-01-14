@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Sleekflow.Todos.DAL;
@@ -21,6 +22,11 @@ builder.Services.AddSwaggerGen(config =>
         Title = "Sleekflow Todos",
         Version = "v1"
     });
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    config.IncludeXmlComments(xmlPath);
+    
     config.AddSecurityDefinition("Bearer", new()
     {
         In = ParameterLocation.Header,
