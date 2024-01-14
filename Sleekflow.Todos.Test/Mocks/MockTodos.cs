@@ -51,6 +51,29 @@ public static class MockTodos
                 UpdatedBy = "Mock1",
                 CreatedAt = DateTime.Now.AddDays(1),
                 UpdatedAt = DateTime.Now.AddDays(1),
+            },
+            new()
+            {
+                Id = new Guid("7984908b-3f91-4a6c-a651-85119f31eda2"),
+                Name = "Test Name 5",
+                Description = "Test Description 5",
+                Status = "Not Started",
+                CreatedBy = "Mock1",
+                UpdatedBy = "Mock1",
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                TodoTags = [
+                    new TodoTag()
+                    {
+                        Id = new Guid(),
+                        Name = "tag1",
+                    },
+                    new TodoTag()
+                    {
+                        Id = new Guid(),
+                        Name = "tag2",
+                    }
+                ]
             }
         ];
     }

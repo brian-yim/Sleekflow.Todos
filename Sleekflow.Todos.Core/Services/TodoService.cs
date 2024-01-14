@@ -52,6 +52,7 @@ public class TodoService(TodoContext context) : ITodoService
         var result = new ServiceResponseModel<Todo>();
 
         var todo = await _context.Todos
+            .Include(todo => todo.TodoTags)
             .Where(todo =>
                 !todo.IsDeleted &&
                 todo.Id == id
@@ -81,7 +82,13 @@ public class TodoService(TodoContext context) : ITodoService
                 DueDate = model.DueDate,
                 Status = nameof(Status.NotStarted),
                 CreatedBy = "",
-                UpdatedBy = ""
+                UpdatedBy = "",
+                TodoTags = model.Tags
+                    .Select(tag => new TodoTag
+                    {
+                        Name = tag,
+                    })
+                    .ToList(),
             };
 
             await _context.Todos.AddAsync(todo);
@@ -111,6 +118,19 @@ public class TodoService(TodoContext context) : ITodoService
         todo.Name = model.Name;
         todo.Description = model.Description;
         todo.DueDate = model.DueDate;
+        todo.Priority = model.Priority;
+
+        if (todo.TodoTags?.Any() ?? false)
+        {
+            _context.TodoTags.RemoveRange(todo.TodoTags);
+        }
+
+        todo.TodoTags = model.Tags
+            .Select(tag => new TodoTag
+            {
+                Name = tag,
+            })
+            .ToList();
 
         await _context.SaveChangesAsync();
 

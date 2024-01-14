@@ -12,5 +12,5 @@ public class Todo : Auditable
     public required string Status { get; set; }
     public bool IsDeleted { get; set; }
     public int Priority { get; set; } = 0;
-    public IEnumerable<TodoTag>? TodoTags { get; set; } = [];
+    public IList<TodoTag>? TodoTags { get; set; } = [];
 }

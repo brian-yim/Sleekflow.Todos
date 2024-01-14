@@ -23,5 +23,6 @@ public class TodoContext : DbContext
     }
 
     public DbSet<Todo> Todos { get; set; }
+    public DbSet<TodoTag> TodoTags { get; set; }
 
 }

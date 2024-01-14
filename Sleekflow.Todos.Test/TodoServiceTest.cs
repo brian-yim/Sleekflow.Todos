@@ -128,6 +128,22 @@ public class TodoServiceTest : IDisposable
         Assert.NotNull(result.Data);
         Assert.Empty(result.Errors);
     }
+    [Fact]
+    public async void GetByIdAsync_WithTags_Success()
+    {
+        var testId = new Guid("7984908b-3f91-4a6c-a651-85119f31eda2");
+        var result = await _todoService.GetAsync(testId);
+
+        var mockRecord = MockTodos.GetList()
+                    .Where(todo => todo.Id == testId)
+                    .FirstOrDefault();
+
+        Assert.NotNull(result.Data);
+        Assert.Empty(result.Errors);
+
+        Assert.NotNull(result.Data.TodoTags);
+        Assert.Equal(mockRecord?.TodoTags?.Count(), result.Data.TodoTags.Count());
+    }
 
     [Fact]
     public async void GetByIdAsync_NotFound_Fail()
@@ -168,6 +184,26 @@ public class TodoServiceTest : IDisposable
     }
 
     [Fact]
+    public async void CreateAsync_WithTag_Success()
+    {
+        var todoModel = new TodoModel()
+        {
+            Name = "Test Create",
+            Description = "Test Description",
+            DueDate = new DateTime(2025, 1, 1),
+            Tags = ["test", "test2"],
+        };
+
+        var result = await _todoService.CreateAsync(todoModel);
+
+        Assert.NotNull(result.Data);
+        Assert.Empty(result.Errors);
+
+        Assert.NotNull(result.Data.TodoTags);
+        Assert.Equal(todoModel.Tags.Count(), result.Data.TodoTags.Count());
+    }
+
+    [Fact]
     public async void UpdateAsync_Success()
     {
         var testId = new Guid("7984908b-3f91-4a6c-a671-85119f41eda7");
@@ -187,6 +223,58 @@ public class TodoServiceTest : IDisposable
         Assert.Equal(todoModel.Name, result.Data.Name);
         Assert.Equal(todoModel.Description, result.Data.Description);
         Assert.Equal(todoModel.DueDate, result.Data.DueDate);
+    }
+
+    [Fact]
+    public async void UpdateAsync_WithTags_Success()
+    {
+        var testId = new Guid("7984908b-3f91-4a6c-a671-85119f41eda7");
+
+        var todoModel = new TodoModel()
+        {
+            Name = "Test Update Name",
+            Description = "Test Update Description",
+            DueDate = new DateTime(2025, 1, 1),
+            Tags = ["test1", "test2"]
+        };
+
+        var result = await _todoService.UpdateAsync(testId, todoModel);
+
+        Assert.NotNull(result.Data);
+        Assert.Empty(result.Errors);
+
+        Assert.Equal(todoModel.Name, result.Data.Name);
+        Assert.Equal(todoModel.Description, result.Data.Description);
+        Assert.Equal(todoModel.DueDate, result.Data.DueDate);
+
+        Assert.NotNull(result.Data.TodoTags);
+        Assert.Equal(todoModel.Tags.Count(), result.Data.TodoTags.Count());
+    }
+
+    [Fact]
+    public async void UpdateAsync_WithDeleteTags_Success()
+    {
+        var testId = new Guid("7984908b-3f91-4a6c-a671-85119f41eda7");
+
+        var todoModel = new TodoModel()
+        {
+            Name = "Test Update Name",
+            Description = "Test Update Description",
+            DueDate = new DateTime(2025, 1, 1),
+            Tags = ["test1"]
+        };
+
+        var result = await _todoService.UpdateAsync(testId, todoModel);
+
+        Assert.NotNull(result.Data);
+        Assert.Empty(result.Errors);
+
+        Assert.Equal(todoModel.Name, result.Data.Name);
+        Assert.Equal(todoModel.Description, result.Data.Description);
+        Assert.Equal(todoModel.DueDate, result.Data.DueDate);
+
+        Assert.NotNull(result.Data.TodoTags);
+        Assert.Equal(todoModel.Tags.Count(), result.Data.TodoTags.Count());
     }
 
     [Fact]
