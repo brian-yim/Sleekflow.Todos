@@ -27,7 +27,7 @@ public class TodoController(ITodoService todoService) : ControllerBase
                 Direction = $"{sortString[0]}",
             };
 
-        var result = await _todoService.GetAsync(filters, sort);
+        var result = await _todoService.GetAsync(this.GetUserId(), filters, sort);
 
         return this.ToReponse(result);
     }
@@ -44,7 +44,7 @@ public class TodoController(ITodoService todoService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateAsync(TodoModel model)
     {
-        var result = await _todoService.CreateAsync(model);
+        var result = await _todoService.CreateAsync(this.GetUserId(), model);
         return this.ToReponse(result);
     }
 
@@ -52,7 +52,7 @@ public class TodoController(ITodoService todoService) : ControllerBase
     [Route("{id}")]
     public async Task<IActionResult> UpdateAsync(Guid id, TodoModel model)
     {
-        var result = await _todoService.UpdateAsync(id, model);
+        var result = await _todoService.UpdateAsync(this.GetUserId(), id, model);
         return this.ToReponse(result);
     }
 
@@ -60,7 +60,7 @@ public class TodoController(ITodoService todoService) : ControllerBase
     [Route("{id}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
     {
-        var result = await _todoService.DeleteAsync(id);
+        var result = await _todoService.DeleteAsync(this.GetUserId(), id);
         return this.ToReponse(result);
     }
 }

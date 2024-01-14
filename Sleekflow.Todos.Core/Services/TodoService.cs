@@ -12,11 +12,16 @@ public class TodoService(TodoContext context) : ITodoService
     private readonly TodoContext _context = context;
 
     public async Task<ServiceResponseModel<List<Todo>>> GetAsync(
+        string userId,
         IEnumerable<RequestFilterModel>? filters = null,
         RequestSortModel? sort = null
     )
     {
-        var query = _context.Todos.Where(todo => !todo.IsDeleted);
+        var query = _context.Todos
+            .Where(todo =>
+                todo.CreatedBy == userId &&
+                !todo.IsDeleted
+            );
 
         foreach (var filter in filters ?? [])
         {
@@ -69,20 +74,22 @@ public class TodoService(TodoContext context) : ITodoService
         return result;
     }
 
-    public async Task<ServiceResponseModel<Todo>> CreateAsync(TodoModel model)
+    public async Task<ServiceResponseModel<Todo>> CreateAsync(
+        string userId,
+        TodoModel model
+    )
     {
         var result = new ServiceResponseModel<Todo>();
         try
         {
-            //TODO: Get username
             var todo = new Todo()
             {
                 Name = model.Name,
                 Description = model.Description,
                 DueDate = model.DueDate,
                 Status = nameof(Status.NotStarted),
-                CreatedBy = "",
-                UpdatedBy = "",
+                CreatedBy = userId,
+                UpdatedBy = userId,
                 TodoTags = model.Tags
                     .Select(tag => new TodoTag
                     {
@@ -98,14 +105,17 @@ public class TodoService(TodoContext context) : ITodoService
         }
         catch (Exception ex)
         {
-            //TODO: add log
             result.Errors.Add(new ErrorModel(ex.Message));
         }
 
         return result;
     }
 
-    public async Task<ServiceResponseModel<Todo>> UpdateAsync(Guid id, TodoModel model)
+    public async Task<ServiceResponseModel<Todo>> UpdateAsync(
+        string userId,
+        Guid id,
+        TodoModel model
+    )
     {
         var responseModel = await GetAsync(id);
 
@@ -114,11 +124,21 @@ public class TodoService(TodoContext context) : ITodoService
             return responseModel;
         }
 
+        if (responseModel.Data.CreatedBy != userId)
+        {
+            return new()
+            {
+                Errors = [new NotFoundError()]
+            };
+        }
+
         var todo = responseModel.Data;
         todo.Name = model.Name;
         todo.Description = model.Description;
         todo.DueDate = model.DueDate;
         todo.Priority = model.Priority;
+        todo.UpdatedBy = userId;
+        todo.UpdatedAt = DateTime.Now;
 
         if (todo.TodoTags?.Any() ?? false)
         {
@@ -137,7 +157,10 @@ public class TodoService(TodoContext context) : ITodoService
         return responseModel;
     }
 
-    public async Task<ServiceResponseModel> DeleteAsync(Guid id)
+    public async Task<ServiceResponseModel> DeleteAsync(
+        string userId,
+        Guid id
+    )
     {
         var responseModel = await GetAsync(id);
 
@@ -149,7 +172,17 @@ public class TodoService(TodoContext context) : ITodoService
             };
         }
 
+        if (responseModel.Data.CreatedBy != userId)
+        {
+            return new()
+            {
+                Errors = [new NotFoundError()]
+            };
+        }
+        
         responseModel.Data.IsDeleted = true;
+        responseModel.Data.UpdatedBy = userId;
+        responseModel.Data.UpdatedAt = DateTime.Now;
 
         await _context.SaveChangesAsync();
 

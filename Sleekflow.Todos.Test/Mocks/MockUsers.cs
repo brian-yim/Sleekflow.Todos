@@ -9,6 +9,7 @@ public static class MockUsers
         return [
             new()
             {
+                Id = new Guid("10b0f3fe-2893-4dfe-9448-ab37e8e86d95"),
                 UserName = "Exist",
                 PasswordHash = "$2a$11$RYSuXkNLiaTraaDu6AyYJuNHPW1JfMAcIiEMgeEh11kQxFGsUOoTm",
                 CreatedBy = "Exist",
@@ -17,6 +18,7 @@ public static class MockUsers
             },
             new()
             {
+                Id = new Guid("10b0f3fe-2893-4dfe-9448-ab37e8e86d35"),
                 UserName = "Suspended",
                 PasswordHash = "$2a$11$RYSuXkNLiaTraaDu6AyYJuNHPW1JfMAcIiEMgeEh11kQxFGsUOoTm",
                 CreatedBy = "Suspended",

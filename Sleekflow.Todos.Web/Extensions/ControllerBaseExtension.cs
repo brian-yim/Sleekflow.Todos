@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Sleekflow.Todos.Core.Models;
 
@@ -5,6 +6,18 @@ namespace Sleekflow.Todos.Web.Extensions;
 
 public static class ControllerBaseExtension
 {
+    public static string GetUserName(this ControllerBase controllerBase)
+    {
+        return controllerBase?.User?.Identity?.Name ??
+            throw new UnauthorizedAccessException();
+    }
+
+    public static string GetUserId(this ControllerBase controllerBase)
+    {
+        return controllerBase?.User?.FindFirstValue(ClaimTypes.NameIdentifier) ??
+            throw new UnauthorizedAccessException();
+    }
+
     public static IActionResult ToReponse<T>(
         this ControllerBase controllerBase,
         ServiceResponseModel<T> result

@@ -27,6 +27,7 @@ public class TodoServiceTest : IDisposable
         _conetxt.Database.EnsureCreated();
 
         _conetxt.Todos.AddRange(MockTodos.GetList());
+        _conetxt.Users.AddRange(MockUsers.GetList());
 
         _conetxt.SaveChanges();
 
@@ -42,10 +43,13 @@ public class TodoServiceTest : IDisposable
     public async void GetAsync_Success()
     {
         var recordCount = MockTodos.GetList()
-            .Where(todo => !todo.IsDeleted)
+            .Where(todo => 
+                !todo.IsDeleted &&
+                todo.CreatedBy == "10b0f3fe-2893-4dfe-9448-ab37e8e86d95"
+            )
             .Count();
 
-        var result = await _todoService.GetAsync();
+        var result = await _todoService.GetAsync("10b0f3fe-2893-4dfe-9448-ab37e8e86d95");
 
 
         Assert.NotNull(result.Data);
@@ -65,18 +69,18 @@ public class TodoServiceTest : IDisposable
         var createdByFilter = new RequestFilterModel()
         {
             Field = "CreatedBy",
-            Value = "Mock1"
+            Value = "10b0f3fe-2893-4dfe-9448-ab37e8e86d94",
         };
 
         var recordCount = MockTodos.GetList()
             .Where(todo =>
                 !todo.IsDeleted &&
                 todo.Status == "Not Started" &&
-                todo.CreatedBy == "Mock1"
+                todo.CreatedBy == "10b0f3fe-2893-4dfe-9448-ab37e8e86d94"
             )
             .Count();
 
-        var result = await _todoService.GetAsync([statusFilter, createdByFilter]);
+        var result = await _todoService.GetAsync("10b0f3fe-2893-4dfe-9448-ab37e8e86d94", [statusFilter, createdByFilter]);
 
         Assert.NotNull(result.Data);
 
@@ -102,11 +106,12 @@ public class TodoServiceTest : IDisposable
         var records = MockTodos.GetList()
             .Where(todo =>
                 !todo.IsDeleted &&
-                todo.Status == "Not Started"
+                todo.Status == "Not Started" &&
+                todo.CreatedBy == "10b0f3fe-2893-4dfe-9448-ab37e8e86d95"
             )
             .OrderByDescending(todo => todo.CreatedAt);
 
-        var result = await _todoService.GetAsync([statusFilter], sort);
+        var result = await _todoService.GetAsync("10b0f3fe-2893-4dfe-9448-ab37e8e86d95", [statusFilter], sort);
 
         Assert.NotNull(result.Data);
 
@@ -177,7 +182,7 @@ public class TodoServiceTest : IDisposable
             DueDate = new DateTime(2025, 1, 1),
         };
 
-        var result = await _todoService.CreateAsync(todoModel);
+        var result = await _todoService.CreateAsync("10b0f3fe-2893-4dfe-9448-ab37e8e86d95", todoModel);
 
         Assert.NotNull(result.Data);
         Assert.Empty(result.Errors);
@@ -194,7 +199,7 @@ public class TodoServiceTest : IDisposable
             Tags = ["test", "test2"],
         };
 
-        var result = await _todoService.CreateAsync(todoModel);
+        var result = await _todoService.CreateAsync("10b0f3fe-2893-4dfe-9448-ab37e8e86d95", todoModel);
 
         Assert.NotNull(result.Data);
         Assert.Empty(result.Errors);
@@ -215,7 +220,7 @@ public class TodoServiceTest : IDisposable
             DueDate = new DateTime(2025, 1, 1),
         };
 
-        var result = await _todoService.UpdateAsync(testId, todoModel);
+        var result = await _todoService.UpdateAsync("10b0f3fe-2893-4dfe-9448-ab37e8e86d95", testId, todoModel);
 
         Assert.NotNull(result.Data);
         Assert.Empty(result.Errors);
@@ -238,7 +243,7 @@ public class TodoServiceTest : IDisposable
             Tags = ["test1", "test2"]
         };
 
-        var result = await _todoService.UpdateAsync(testId, todoModel);
+        var result = await _todoService.UpdateAsync("10b0f3fe-2893-4dfe-9448-ab37e8e86d95", testId, todoModel);
 
         Assert.NotNull(result.Data);
         Assert.Empty(result.Errors);
@@ -264,7 +269,7 @@ public class TodoServiceTest : IDisposable
             Tags = ["test1"]
         };
 
-        var result = await _todoService.UpdateAsync(testId, todoModel);
+        var result = await _todoService.UpdateAsync("10b0f3fe-2893-4dfe-9448-ab37e8e86d95", testId, todoModel);
 
         Assert.NotNull(result.Data);
         Assert.Empty(result.Errors);
@@ -275,6 +280,27 @@ public class TodoServiceTest : IDisposable
 
         Assert.NotNull(result.Data.TodoTags);
         Assert.Equal(todoModel.Tags.Count(), result.Data.TodoTags.Count());
+    }
+
+
+    [Fact]
+    public async void UpdateAsync_NotOwn_Fail()
+    {
+        var testId = new Guid("7984908b-3f91-4a6c-a671-85119f41eda7");
+
+        var todoModel = new TodoModel()
+        {
+            Name = "Test Update Name",
+            Description = "Test Update Description",
+            DueDate = new DateTime(2025, 1, 1),
+            Tags = ["test1"]
+        };
+
+        var result = await _todoService.UpdateAsync("10b0f3fe-2893-4dfe-9448-ab37e8e86d94", testId, todoModel);
+
+        Assert.Null(result.Data);
+        Assert.NotEmpty(result.Errors);
+        Assert.IsType<NotFoundError>(result.Errors.First());
     }
 
     [Fact]
@@ -289,7 +315,7 @@ public class TodoServiceTest : IDisposable
             DueDate = new DateTime(2025, 1, 1),
         };
 
-        var result = await _todoService.UpdateAsync(testId, todoModel);
+        var result = await _todoService.UpdateAsync("10b0f3fe-2893-4dfe-9448-ab37e8e86d95", testId, todoModel);
 
         Assert.Null(result.Data);
         Assert.NotEmpty(result.Errors);
@@ -301,9 +327,20 @@ public class TodoServiceTest : IDisposable
     {
         var testId = new Guid("7984908b-3f91-4a6c-a671-85119f41eda7");
 
-        var result = await _todoService.DeleteAsync(testId);
+        var result = await _todoService.DeleteAsync("10b0f3fe-2893-4dfe-9448-ab37e8e86d95", testId);
 
         Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public async void DeleteAsync_NotOwn_Fail()
+    {
+        var testId = new Guid("7984908b-3f91-4a6c-a671-85119f41eda7");
+
+        var result = await _todoService.DeleteAsync("10b0f3fe-2893-4dfe-9448-ab37e8e86d94", testId);
+
+        Assert.NotEmpty(result.Errors);
+        Assert.IsType<NotFoundError>(result.Errors.First());
     }
 
     [Fact]
@@ -311,7 +348,7 @@ public class TodoServiceTest : IDisposable
     {
         var testId = new Guid("7984908b-3f91-4a6c-a651-85119f41eda8");
 
-        var result = await _todoService.DeleteAsync(testId);
+        var result = await _todoService.DeleteAsync("10b0f3fe-2893-4dfe-9448-ab37e8e86d95", testId);
 
         Assert.NotEmpty(result.Errors);
         Assert.IsType<NotFoundError>(result.Errors.First());
