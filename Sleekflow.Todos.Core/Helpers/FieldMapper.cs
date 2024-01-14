@@ -9,6 +9,7 @@ public class FieldMapper
         ["description"] = "Description",
         ["duedate"] = "DueDate",
         ["status"] = "Status",
+        ["priority"] = "Priority",
         ["createdby"] = "CreatedBy",
         ["updatedby"] = "UpdatedBy",
         ["createdat"] = "CreatedAt",

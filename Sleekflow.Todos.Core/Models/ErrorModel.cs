@@ -7,3 +7,6 @@ public class ErrorModel(string message)
 
 public class NotFoundError(string message = "Record Not Found.")
     : ErrorModel(message);
+
+public class AuthError(string message = "Username / Password incorrect")
+    : ErrorModel(message);

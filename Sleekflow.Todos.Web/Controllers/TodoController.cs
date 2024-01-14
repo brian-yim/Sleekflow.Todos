@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sleekflow.Todos.Core.Models;
 using Sleekflow.Todos.Core.Services;
@@ -5,15 +6,12 @@ using Sleekflow.Todos.Web.Extensions;
 
 namespace Sleekflow.Todos.Web.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]s")]
-public class TodoController : ControllerBase
+public class TodoController(ITodoService todoService) : ControllerBase
 {
-    private readonly ITodoService _todoService;
-    public TodoController(ITodoService todoService)
-    {
-        _todoService = todoService;
-    }
+    private readonly ITodoService _todoService = todoService;
 
     [HttpGet]
     public async Task<IActionResult> List(
