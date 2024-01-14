@@ -109,6 +109,21 @@ public class AuthServiceTest : IDisposable
     }
 
     [Fact]
+    public async void LoginAsync_Suspended_Fail()
+    {
+        var user = new UserModel()
+        {
+            UserName = "Suspended",
+            Password = "123"
+        };
+
+        var result = await _authService.LoginAsync(user);
+
+        Assert.NotEmpty(result.Errors);
+        Assert.IsType<AuthError>(result.Errors.First());
+    }
+
+    [Fact]
     public async void LoginAsync_Success()
     {
         var user = new UserModel()

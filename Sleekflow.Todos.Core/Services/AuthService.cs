@@ -29,13 +29,17 @@ public class AuthService(IConfiguration config, TodoContext context) : IAuthServ
             return result;
         }
 
-        GenerateJwtToken(user);
-
         var isValid = BCrypt.Net.BCrypt.EnhancedVerify(model.Password, user.PasswordHash);
 
         if (!isValid)
         {
             result.Errors.Add(new AuthError());
+            return result;
+        }
+
+        if (!user.IsActive)
+        {
+            result.Errors.Add(new AuthError("User suspended"));
             return result;
         }
 

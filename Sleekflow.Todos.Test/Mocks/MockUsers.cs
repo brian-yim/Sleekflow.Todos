@@ -13,6 +13,15 @@ public static class MockUsers
                 PasswordHash = "$2a$11$RYSuXkNLiaTraaDu6AyYJuNHPW1JfMAcIiEMgeEh11kQxFGsUOoTm",
                 CreatedBy = "Exist",
                 UpdatedBy = "Exist",
+                IsActive = true,
+            },
+            new()
+            {
+                UserName = "Suspended",
+                PasswordHash = "$2a$11$RYSuXkNLiaTraaDu6AyYJuNHPW1JfMAcIiEMgeEh11kQxFGsUOoTm",
+                CreatedBy = "Suspended",
+                UpdatedBy = "Suspended",
+                IsActive = false
             }
         ];
     }
