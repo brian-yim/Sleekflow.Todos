@@ -18,6 +18,7 @@ public class TodoService(TodoContext context) : ITodoService
     )
     {
         var query = _context.Todos
+            .Include(todo => todo.TodoTags)
             .Where(todo =>
                 todo.CreatedBy == userId &&
                 !todo.IsDeleted
@@ -87,7 +88,7 @@ public class TodoService(TodoContext context) : ITodoService
                 Name = model.Name,
                 Description = model.Description,
                 DueDate = model.DueDate,
-                Status = nameof(Status.NotStarted),
+                Status = model.Status,
                 CreatedBy = userId,
                 UpdatedBy = userId,
                 TodoTags = model.Tags
@@ -137,6 +138,7 @@ public class TodoService(TodoContext context) : ITodoService
         todo.Description = model.Description;
         todo.DueDate = model.DueDate;
         todo.Priority = model.Priority;
+        todo.Status = model.Status;
         todo.UpdatedBy = userId;
         todo.UpdatedAt = DateTime.Now;
 
@@ -179,7 +181,7 @@ public class TodoService(TodoContext context) : ITodoService
                 Errors = [new NotFoundError()]
             };
         }
-        
+
         responseModel.Data.IsDeleted = true;
         responseModel.Data.UpdatedBy = userId;
         responseModel.Data.UpdatedAt = DateTime.Now;

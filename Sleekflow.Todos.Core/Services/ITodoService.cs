@@ -10,22 +10,22 @@ public interface ITodoService
         IEnumerable<RequestFilterModel>? filters = null,
         RequestSortModel? sort = null
     );
-    
+
     Task<ServiceResponseModel<Todo>> GetAsync(Guid id);
 
     Task<ServiceResponseModel<Todo>> CreateAsync(
-        string userId, 
+        string userId,
         TodoModel model
     );
 
     Task<ServiceResponseModel<Todo>> UpdateAsync(
-        string userId, 
-        Guid id, 
+        string userId,
+        Guid id,
         TodoModel model
     );
 
     Task<ServiceResponseModel> DeleteAsync(
-        string userId, 
+        string userId,
         Guid id
     );
 }

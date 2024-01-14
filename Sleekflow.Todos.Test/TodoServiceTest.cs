@@ -43,7 +43,7 @@ public class TodoServiceTest : IDisposable
     public async void GetAsync_Success()
     {
         var recordCount = MockTodos.GetList()
-            .Where(todo => 
+            .Where(todo =>
                 !todo.IsDeleted &&
                 todo.CreatedBy == "10b0f3fe-2893-4dfe-9448-ab37e8e86d95"
             )
