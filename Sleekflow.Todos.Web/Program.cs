@@ -26,7 +26,7 @@ builder.Services.AddSwaggerGen(config =>
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     config.IncludeXmlComments(xmlPath);
-    
+
     config.AddSecurityDefinition("Bearer", new()
     {
         In = ParameterLocation.Header,
