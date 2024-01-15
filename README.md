@@ -64,3 +64,8 @@ docker build . -t sleekflow.todos.web
 ```bash
 docker run -p 8080:8080 sleekflow.todos.web
 ```
+
+## Futher Enhancement
+
+- Add GraphQL publish/subscription for real-time update
+- Add Todo permiission for share to others
